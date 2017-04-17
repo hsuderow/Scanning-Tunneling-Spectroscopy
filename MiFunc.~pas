@@ -1,0 +1,128 @@
+unit MiFunc;
+
+interface
+
+uses windows;
+
+function sw_suche(m:array of tpoint; var ms:array of tpoint):integer;
+function appl_exepath:string;
+function text_openfile(fname:string; var f:text; id:integer):boolean;
+  { id = 0/1/2 --> reset/rewrite/append }
+function text_closefile(var f:text):boolean;
+function text_read(var f:text; var s:string):boolean;
+function text_readln(var f:text; var s:string):boolean;
+function text_readuntilspace(var f:text):string;
+function text_write(var f:text; s:string):boolean;
+function text_writeln(var f:text; s:string):boolean;
+
+implementation
+
+uses sysutils;
+
+function sw_suche(m:array of tpoint; var ms:array of tpoint):integer;
+  // Suche nach Punktmengen in m und Rückgabe der zugehörigen Schwerpunkte in ms
+  // Result = Anzahl gefundener Schwerpunkte = length(ms)
+  // die Größe von ns muss vorher gesetzt werden ( mindestens length(m)/3 )
+  var  i,j,k,l,n,n2,ns: integer;
+       m1,m2          : array of tpoint;
+       xs,ys          : double;
+       a              : boolean;
+
+  begin
+    result:=0; if length(ms) = 0 then exit;
+
+    n:=length(m); n2:=n; setlength(m1,n); for i:=0 to n-1 do m1[i]:=m[i];
+
+    i:=0;
+    while i < n do begin   // doppelte Punkte suchen und löschen (nachfolgende Pkt. nach vorn schieben)
+      k:=i+1;
+      while k < n do
+        if (m1[i].x = m1[k].x) and (m1[i].y = m1[k].y)
+          then begin for j:=k to n-2 do m1[j]:=m1[j+1]; dec(n); end
+          else inc(k);
+      inc(i); end;
+    if n2 > n   // doppelte Punkte gefunden --> Arreay verkleinern
+      then begin m1:=copy(m1,0,n); n2:=n; end;
+
+    setlength(m2,n); ns:=0;   // ms - Schwerpunktmenge ; ns - Schwerpunktanzahl
+
+    while (length(m1) > 2) and (length(ms) > ns) do begin
+      // 1. Punkt mit allen Nachbarn von m1 nach m2 kopieren und in m1 löschen
+      n:=length(m1); m2[0]:=m1[0]; k:=1;   // k = Anz. kopierter Punkte in m2
+      i:=1;
+      while i < n do begin
+        a:=false;
+        for j:=0 to k-1 do begin
+          a:=((abs(m1[i].x-m2[j].x) = 1) and (m1[i].y=m2[j].y)) xor ((abs(m1[i].y-m2[j].y) = 1) and (m1[i].x=m2[j].x));
+          if a then break; end;
+        if a
+          then begin   // Pkt. m1[i] hat Nachbarn in m2 --> verschieben und in m1 nachfolgende Pkt. nach vorn schieben
+            m2[k]:=m1[i]; inc(k);
+            for j:=i to n-2 do m1[j]:=m1[j+1]; dec(n);
+            i:=1;      // Punktmenge wurde vergrößert --> Suche muß wieder von vorn beginnen mit m1[1]
+            end
+          else inc(i);
+        end;
+      m1:=copy(m1,1,n-1);   // kopierte Punkt aus m1 entfernen
+
+      if k > 2 then begin   // > 2 Punkte in Punktmenge m2 - Schwerpunktberechnung
+        xs:=0; ys:=0;
+        for i:=0 to k-1 do begin xs:=xs+m2[i].x; ys:=ys+m2[i].y; end;
+        ms[ns].x:=round(xs/k); ms[ns].y:=round(ys/k); inc(ns);
+        end;
+      end;
+
+      j:=0; k:=0;
+      for i:=0 to ns-1 do
+      begin
+        if (not(ms[i].x>j) or ((ms[i].x=j) and (ms[i].y>k))) or (i=0) then
+        begin
+          if i=0 then j:=ms[i].x;
+          for l:=0 to i-1 do
+          begin
+            if (ms[i].x<ms[l].x) or ((ms[i].x=ms[l].x) and (ms[i].y<ms[l].y)) then
+            begin
+              k:=ms[i].x;
+              n:=ms[i].y;
+              for n2:=i-1 downto l do
+              begin
+                ms[n2+1].x:=ms[n2].x;
+                ms[n2+1].y:=ms[n2].y;
+              end;
+              ms[l].x:=k;
+              ms[l].y:=n;
+              break;
+            end;
+          end;
+        end
+        else j:=ms[i].x;
+      end;
+
+    setlength(m1,0); setlength(m2,0);
+    result:=ns;
+    end;
+function appl_exepath:string;
+  begin result:=extractfilepath(paramstr(0)); end;
+function text_openfile(fname:string; var f:text; id:integer):boolean;
+  begin
+    {$I-} assignfile(f,fname); case id of 0: reset(f);   1: rewrite(f);   2: append(f); end;
+    result:=(ioresult = 0); {$I+} end;
+function text_closefile(var f:text):boolean;
+  begin {$I-} closefile(f); result:=(ioresult = 0); {$I+} end;
+function text_read(var f:text; var s:string):boolean;
+  begin {$I-} read(f,s); result:=(ioresult = 0); {$I+} end;
+function text_readln(var f:text; var s:string):boolean;
+  begin {$I-} readln(f,s); result:=(ioresult = 0); {$I+} end;
+function text_readuntilspace(var f:text):string;
+  var   s : string;
+        s1: string[1];
+  begin
+    s:=''; s1:='X';
+    {$I-} while not eof(f) and (length(s1)=1) and (s1<>' ') do begin read(f,s1); s:=s+s1; end; {$I+}
+    result:=s; end;
+function text_write(var f:text; s:string):boolean;
+  begin {$I-} write(f,s); result:=(ioresult = 0); {$I+} end;
+function text_writeln(var f:text; s:string):boolean;
+  begin {$I-} writeln(f,s); result:=(ioresult = 0); {$I+} end;
+
+end.

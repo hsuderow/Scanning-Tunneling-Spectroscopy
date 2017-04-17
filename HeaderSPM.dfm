@@ -1,0 +1,124 @@
+object Form2: TForm2
+  Left = 691
+  Top = 124
+  Width = 311
+  Height = 365
+  Caption = 'Form2'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel
+    Left = 208
+    Top = 8
+    Width = 27
+    Height = 13
+    Caption = 'Type:'
+  end
+  object Label2: TLabel
+    Left = 240
+    Top = 8
+    Width = 10
+    Height = 13
+    Caption = 'IV'
+  end
+  object Label3: TLabel
+    Left = 208
+    Top = 24
+    Width = 40
+    Height = 13
+    Caption = 'PointsNr'
+  end
+  object Label4: TLabel
+    Left = 256
+    Top = 24
+    Width = 24
+    Height = 13
+    Caption = '1024'
+  end
+  object Label5: TLabel
+    Left = 208
+    Top = 56
+    Width = 35
+    Height = 13
+    Caption = 'Integral'
+  end
+  object Label6: TLabel
+    Left = 256
+    Top = 56
+    Width = 6
+    Height = 13
+    Caption = '1'
+  end
+  object Label7: TLabel
+    Left = 208
+    Top = 72
+    Width = 29
+    Height = 13
+    Caption = 'ZBVal'
+  end
+  object Label8: TLabel
+    Left = 256
+    Top = 72
+    Width = 6
+    Height = 13
+    Caption = '0'
+  end
+  object Label9: TLabel
+    Left = 208
+    Top = 88
+    Width = 23
+    Height = 13
+    Caption = 'T (K)'
+  end
+  object Label10: TLabel
+    Left = 256
+    Top = 88
+    Width = 6
+    Height = 13
+    Caption = '0'
+  end
+  object Label11: TLabel
+    Left = 208
+    Top = 104
+    Width = 23
+    Height = 13
+    Caption = 'B (T)'
+  end
+  object Label12: TLabel
+    Left = 256
+    Top = 104
+    Width = 6
+    Height = 13
+    Caption = '0'
+  end
+  object Label13: TLabel
+    Left = 208
+    Top = 40
+    Width = 35
+    Height = 13
+    Caption = 'Interval'
+  end
+  object Label14: TLabel
+    Left = 256
+    Top = 40
+    Width = 6
+    Height = 13
+    Caption = '0'
+  end
+  object RichEdit1: TRichEdit
+    Left = 8
+    Top = 8
+    Width = 185
+    Height = 313
+    Lines.Strings = (
+      'RichEdit1')
+    ScrollBars = ssBoth
+    TabOrder = 0
+  end
+end

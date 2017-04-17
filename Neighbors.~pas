@@ -1,0 +1,17 @@
+unit Neighbors;
+
+interface
+
+uses
+  procedure Neighbors;
+
+implementation
+
+procedure Neighbors;
+begin
+  if ext='txt' then
+    
+end;
+
+end.
+ 
